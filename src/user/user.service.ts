@@ -4,7 +4,6 @@ import { DatabaseService } from 'src/database/database.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { validateUUID } from 'src/utils/validateUUID';
 
 @Injectable()
 export class UserService {
@@ -27,8 +26,6 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    validateUUID(id, 'User');
-
     const user = await this.databaseService.findOneUser(id);
 
     delete user.password;
@@ -36,8 +33,6 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    validateUUID(id, 'User');
-
     const user = await this.databaseService.updateUser(id, updateUserDto);
 
     delete user.password;
@@ -45,7 +40,6 @@ export class UserService {
   }
 
   async remove(id: string) {
-    validateUUID(id, 'User');
     return await this.databaseService.removeUser(id);
   }
 }

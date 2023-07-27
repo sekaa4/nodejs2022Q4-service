@@ -9,6 +9,7 @@ import {
   Header,
   HttpStatus,
   HttpCode,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -66,7 +67,7 @@ export class UserController {
     description: 'User not found',
     status: HttpStatus.NOT_FOUND,
   })
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.findOne(id);
   }
 
@@ -90,7 +91,14 @@ export class UserController {
   // @ApiBadRequestResponse({
   //   description: 'User oldPassword is wrong',
   // })
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    )
+    id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.userService.update(id, updateUserDto);
   }
 
@@ -109,7 +117,7 @@ export class UserController {
   @ApiBadRequestResponse({
     description: 'Bad Request, userId is invalid(not uuid)',
   })
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
   }
 }

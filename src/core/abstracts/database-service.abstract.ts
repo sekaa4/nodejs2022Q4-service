@@ -5,7 +5,6 @@ import { Artist } from 'src/artist/entities/artist.entity';
 import { Favorites } from 'src/database/interface/favorites.interface';
 import { CreateTrackDto } from 'src/track/dto/create-track.dto';
 import { Track } from 'src/track/entities/track.entity';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { IGenericRepository } from './generic-repository.abstract';

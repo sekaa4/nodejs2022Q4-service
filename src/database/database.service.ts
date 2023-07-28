@@ -1,31 +1,22 @@
-import {
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Track } from 'src/track/entities/track.entity';
-import { UserResp } from 'src/database/interface/user.interface';
 import { User } from 'src/user/entities/user.entity';
 import { Favorites } from './interface/favorites.interface';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { IDatabaseService } from 'src/core/abstracts/database-service.abstract';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { InMemoryGenericRepository } from './in-memory/in-memory-generic-repository';
-import { async } from 'rxjs';
-import { CreateAlbumDto } from 'src/album/dto/create-album.dto';
-import { CreateArtistDto } from 'src/artist/dto/create-artist.dto';
-import { CreateTrackDto } from 'src/track/dto/create-track.dto';
+import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
+import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
+import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 
 @Injectable()
 export class DatabaseService implements IDatabaseService {
   users = new InMemoryGenericRepository<User, UpdateUserDto>([]);
-  readonly artists = new InMemoryGenericRepository<Artist, CreateArtistDto>([]);
-  readonly albums = new InMemoryGenericRepository<Album, CreateAlbumDto>([]);
-  readonly tracks = new InMemoryGenericRepository<Track, CreateTrackDto>([]);
+  readonly artists = new InMemoryGenericRepository<Artist, UpdateArtistDto>([]);
+  readonly albums = new InMemoryGenericRepository<Album, UpdateAlbumDto>([]);
+  readonly tracks = new InMemoryGenericRepository<Track, UpdateTrackDto>([]);
 
   // this.users;
 

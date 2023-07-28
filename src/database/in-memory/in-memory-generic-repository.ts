@@ -9,7 +9,6 @@ import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
 import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
 import { IGenericRepository } from 'src/core/abstracts/generic-repository.abstract';
 import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/entities/user.entity';
 
@@ -22,12 +21,6 @@ export class InMemoryGenericRepository<T, K>
     this._repository = repository;
   }
 
-  // create: (payload: T) => Promise<T>;
-  // findMany: () => Promise<T[]>;
-  // findUnique: (id: string) => Promise<T>;
-  // update: (id: string, payload: K) => Promise<T>;
-  // delete: (id: string) => void;
-
   async create(payload: T): Promise<T> {
     try {
       this._repository.push({ ...payload });
@@ -35,7 +28,7 @@ export class InMemoryGenericRepository<T, K>
       return payload;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Can not add user, try again later',
+        'Something wrong in the server, try again later',
       );
     }
   }
@@ -47,7 +40,7 @@ export class InMemoryGenericRepository<T, K>
       return items;
     } catch (error) {
       throw new InternalServerErrorException(
-        'Something wrong, try again later',
+        'Something wrong in the server, try again later',
       );
     }
   }
@@ -65,7 +58,7 @@ export class InMemoryGenericRepository<T, K>
       if (error.status === HttpStatus.NOT_FOUND) throw error;
 
       throw new InternalServerErrorException(
-        'Something wrong, try again later',
+        'Something wrong in the server, try again later',
       );
     }
   }
@@ -101,6 +94,7 @@ export class InMemoryGenericRepository<T, K>
       if (!~itemIndex) throw new NotFoundException(`${id} not found`);
 
       items[itemIndex] = { ...items[itemIndex], ...payload };
+
       return items[itemIndex];
     } catch (error) {
       if (
@@ -124,7 +118,6 @@ export class InMemoryGenericRepository<T, K>
 
       items.splice(itemIndex, 1);
     } catch (error) {
-      console.log(error);
       if (error.status === HttpStatus.NOT_FOUND) throw error;
       throw new InternalServerErrorException(
         'Something wrong in the server, try again later',

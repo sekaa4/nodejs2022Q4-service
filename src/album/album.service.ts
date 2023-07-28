@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -28,6 +28,8 @@ export class AlbumService {
 
   async findOne(id: string) {
     const user = await this.databaseService.albums.findUnique(id);
+
+    if (!user) throw new NotFoundException(`Album with id: <${id}> not found`);
 
     return user;
   }

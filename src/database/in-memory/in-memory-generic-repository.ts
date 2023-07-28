@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   InternalServerErrorException,
   NotFoundException,
@@ -11,8 +10,19 @@ import { IGenericRepository } from 'src/core/abstracts/generic-repository.abstra
 import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/entities/user.entity';
+import { Album } from '../interface/album.interface';
+import { Artist } from '../interface/artist.interface';
+import { Track } from '../interface/track.interface';
 
-export class InMemoryGenericRepository<T, K>
+type PayLoad =
+  | UpdateUserDto
+  | UpdateArtistDto
+  | UpdateAlbumDto
+  | UpdateTrackDto;
+
+type Entity = Artist | Track | Album | User;
+
+export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
   implements IGenericRepository<T, K>
 {
   private _repository: T[];
@@ -48,10 +58,10 @@ export class InMemoryGenericRepository<T, K>
   async findUnique(id: string) {
     try {
       const items = [...this._repository];
-      //@ts-ignore
+
       const item = items.find((item) => item.id === id);
 
-      if (!item) throw new NotFoundException(`${id} not found`);
+      // if (!item) throw new NotFoundException(`${id} not found`);
 
       return item;
     } catch (error) {
@@ -89,7 +99,6 @@ export class InMemoryGenericRepository<T, K>
       }
 
       const items = this._repository;
-      //@ts-ignore
       const itemIndex = items.findIndex((item) => item.id === id);
       if (!~itemIndex) throw new NotFoundException(`${id} not found`);
 
@@ -112,7 +121,6 @@ export class InMemoryGenericRepository<T, K>
   async delete(id: string) {
     try {
       const items = this._repository;
-      //@ts-ignore
       const itemIndex = items.findIndex((item) => item.id === id);
       if (!~itemIndex) throw new NotFoundException(`${id} not found`);
 

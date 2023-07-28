@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { v4 as uuid } from 'uuid';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -27,9 +27,12 @@ export class ArtistService {
   }
 
   async findOne(id: string) {
-    const user = await this.databaseService.artists.findUnique(id);
+    const artist = await this.databaseService.artists.findUnique(id);
 
-    return user;
+    if (!artist)
+      throw new NotFoundException(`Artist with id: <${id}> not found`);
+
+    return artist;
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {

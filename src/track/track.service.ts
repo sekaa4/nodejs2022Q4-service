@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -28,6 +28,8 @@ export class TrackService {
 
   async findOne(id: string) {
     const track = await this.databaseService.tracks.findUnique(id);
+
+    if (!track) throw new NotFoundException(`Track with id: <${id}> not found`);
 
     return track;
   }

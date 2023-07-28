@@ -27,15 +27,15 @@ export class TrackService {
   }
 
   async findOne(id: string) {
-    const user = await this.databaseService.tracks.findUnique(id);
+    const track = await this.databaseService.tracks.findUnique(id);
 
-    return user;
+    return track;
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-    const user = await this.databaseService.tracks.update(id, updateTrackDto);
+    const track = await this.databaseService.tracks.update(id, updateTrackDto);
 
-    return user;
+    return track;
   }
 
   async remove(id: string) {

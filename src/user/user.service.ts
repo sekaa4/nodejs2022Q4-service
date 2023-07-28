@@ -10,7 +10,7 @@ export class UserService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
-    const user = {
+    const userPayload = {
       id: uuid(),
       version: 1,
       createdAt: Date.now(),
@@ -18,28 +18,37 @@ export class UserService {
       ...createUserDto,
     };
 
-    return await this.databaseService.addUser(user);
+    const user = await this.databaseService.users.create(userPayload);
+    delete user.password;
+
+    return user;
   }
 
   async findAll() {
-    return this.databaseService.findAllUser();
+    const users = await this.databaseService.users.findMany();
+    const resItem = users.map((user) => {
+      delete user.password;
+      return user;
+    });
+
+    return users;
   }
 
   async findOne(id: string) {
-    const user = await this.databaseService.findOneUser(id);
+    const user = await this.databaseService.users.findUnique(id);
 
     delete user.password;
     return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.databaseService.updateUser(id, updateUserDto);
+    const user = await this.databaseService.users.update(id, updateUserDto);
 
     delete user.password;
     return user;
   }
 
   async remove(id: string) {
-    return await this.databaseService.removeUser(id);
+    return this.databaseService.users.delete(id);
   }
 }

@@ -12,17 +12,17 @@ export class User {
   login: string;
 
   @ApiProperty({
-    type: String,
+    type: 'integer',
   })
   version: number;
 
   @ApiProperty({
-    type: 'integer',
+    type: Number,
   })
   createdAt: number;
 
   @ApiProperty({
-    type: 'integer',
+    type: Number,
   })
   updatedAt: number;
 

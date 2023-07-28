@@ -21,6 +21,7 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiBadRequestResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 
@@ -36,7 +37,6 @@ export class UserController {
     type: User,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  // @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -57,9 +57,6 @@ export class UserController {
     description: 'The resource was returned successfully',
     type: User,
   })
-  // @ApiUnprocessableEntityResponse({
-  //   description: 'Bad Request, userId is invalid(not uuid)',
-  // })
   @ApiBadRequestResponse({
     description: 'Bad Request, userId is invalid(not uuid)',
   })
@@ -77,10 +74,6 @@ export class UserController {
     description: 'The resource was updated successfully',
     type: User,
   })
-  // @ApiResponse({
-  //   description: 'Bad Request, userId is invalid(not uuid)',
-  //   status: 400,
-  // })
   @ApiForbiddenResponse({
     description: 'User oldPassword is wrong',
   })
@@ -88,9 +81,6 @@ export class UserController {
     description: 'Bad Request, userId is invalid(not uuid)',
   })
   @ApiNotFoundResponse({ description: 'User not found' })
-  // @ApiBadRequestResponse({
-  //   description: 'User oldPassword is wrong',
-  // })
   async update(
     @Param(
       'id',
@@ -105,14 +95,9 @@ export class UserController {
   @Header('Content-Type', 'application/json')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOkResponse({
+  @ApiNoContentResponse({
     description: 'The resource was deleted successfully',
-    status: HttpStatus.NO_CONTENT,
   })
-  // @ApiResponse({
-  //   description: 'Bad Request, userId is invalid(not uuid)',
-  //   status: 400,
-  // })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, userId is invalid(not uuid)',

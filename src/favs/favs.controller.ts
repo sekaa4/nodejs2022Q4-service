@@ -2,41 +2,137 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
   Delete,
+  Header,
+  ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
-import { CreateFavDto } from './dto/create-fav.dto';
-import { UpdateFavDto } from './dto/update-fav.dto';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiProperty,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
+import { FavoritesEntity } from './entities/fav.entity';
 
+class ResponseObj {
+  @ApiProperty({
+    type: String,
+  })
+  message: string;
+}
+
+@ApiTags('Favs')
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}
 
-  @Post()
-  create(@Body() createFavDto: CreateFavDto) {
-    return this.favsService.create(createFavDto);
+  @Post('/track/:id')
+  @Header('Content-Type', 'application/json')
+  @ApiCreatedResponse({
+    description: 'Created Succesfully',
+    type: ResponseObj,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({
+    description: 'Unprocessable Entity, entity does not exist',
+  })
+  async createTrack(@Param('id', ParseUUIDPipe) id: string) {
+    const message = await this.favsService.create(id, 'tracks');
+    const response = { message };
+    return response;
+  }
+
+  @Post('/album/:id')
+  @Header('Content-Type', 'application/json')
+  @ApiCreatedResponse({
+    description: 'Created Succesfully',
+    type: ResponseObj,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({
+    description: 'Unprocessable Entity, entity does not exist',
+  })
+  async createAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    const message = await this.favsService.create(id, 'albums');
+    const response = { message };
+
+    return response;
+  }
+
+  @Post('/artist/:id')
+  @Header('Content-Type', 'application/json')
+  @ApiCreatedResponse({
+    description: 'Created Succesfully',
+    type: ResponseObj,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({
+    description: 'Unprocessable Entity, entity does not exist',
+  })
+  async createArtist(@Param('id', ParseUUIDPipe) id: string) {
+    const message = await this.favsService.create(id, 'artists');
+    const response = { message };
+
+    return response;
   }
 
   @Get()
-  findAll() {
+  @Header('Content-Type', 'application/json')
+  @ApiOkResponse({
+    description: 'The resources were returned successfully',
+    type: FavoritesEntity,
+  })
+  async findAll() {
     return this.favsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favsService.findOne(+id);
+  @Delete('track/:id')
+  @Header('Content-Type', 'application/json')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'The resource was deleted successfully',
+  })
+  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, trackId is invalid(not uuid)',
+  })
+  async removeTrack(@Param('id') id: string) {
+    return this.favsService.remove(id, 'tracks');
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFavDto: UpdateFavDto) {
-    return this.favsService.update(+id, updateFavDto);
+  @Delete('album/:id')
+  @Header('Content-Type', 'application/json')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'The resource was deleted successfully',
+  })
+  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, trackId is invalid(not uuid)',
+  })
+  async removeAlbum(@Param('id') id: string) {
+    return this.favsService.remove(id, 'albums');
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favsService.remove(+id);
+  @Delete('artist/:id')
+  @Header('Content-Type', 'application/json')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'The resource was deleted successfully',
+  })
+  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, trackId is invalid(not uuid)',
+  })
+  async removeArtist(@Param('id') id: string) {
+    return this.favsService.remove(id, 'artists');
   }
 }

@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFavDto } from './dto/create-fav.dto';
-import { UpdateFavDto } from './dto/update-fav.dto';
+import { DatabaseService } from 'src/database/database.service';
+import { Favorites } from 'src/database/interface/favorites.interface';
+
+type Pathname = keyof Favorites;
 
 @Injectable()
 export class FavsService {
-  create(createFavDto: CreateFavDto) {
-    return 'This action adds a new fav';
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async create(id: string, path: Pathname): Promise<string> {
+    const favs = await this.databaseService.create(id, path);
+
+    return favs;
   }
 
-  findAll() {
-    return `This action returns all favs`;
+  async findAll() {
+    const favs = await this.databaseService.findMany();
+
+    return favs;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} fav`;
-  }
-
-  update(id: number, updateFavDto: UpdateFavDto) {
-    return `This action updates a #${id} fav`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} fav`;
+  async remove(id: string, path: Pathname) {
+    return this.databaseService.favorites.delete(id, path);
   }
 }

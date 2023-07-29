@@ -24,19 +24,17 @@ export class DatabaseService implements IDatabaseService {
   readonly tracks = new InMemoryGenericRepository<Track, UpdateTrackDto>([]);
   readonly favorites = new InMemoryFavoriteRepository();
 
-  async create(payload: string, pathname: Pathname) {
-    const item = await this.checkId(payload, pathname);
+  async create(id: string, pathname: Pathname) {
+    const item = await this.checkId(id, pathname);
 
     if (!item)
       throw new UnprocessableEntityException(
-        `${payload} doesn't exist on base ${pathname}`,
+        `${id} doesn't exist on base ${pathname}`,
       );
 
-    const result = await this.favorites.create(payload, pathname);
+    const result = await this.favorites.create(id, pathname);
 
-    return (
-      result && `${payload} exist on base ${pathname} and added to favorites`
-    );
+    return result && `${id} exist on base ${pathname} and added to favorites`;
   }
 
   async findMany() {
@@ -58,6 +56,19 @@ export class DatabaseService implements IDatabaseService {
     }, Promise.resolve({} as FavoritesEntity));
 
     return responseObject;
+  }
+
+  async remove(id: string, pathname: Pathname) {
+    const fields = ['artists', 'albums', 'tracks'] as Pathname[];
+    await this[pathname].delete(id);
+
+    await this.favorites.deleteId(id, pathname);
+
+    for (const field of fields) {
+      if (field === pathname) continue;
+
+      await this[field].updateField(id);
+    }
   }
 
   async checkId(id: string, pathname: Pathname) {

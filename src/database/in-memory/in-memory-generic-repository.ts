@@ -61,8 +61,6 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
 
       const item = items.find((item) => item.id === id);
 
-      // if (!item) throw new NotFoundException(`${id} not found`);
-
       return item;
     } catch (error) {
       if (error.status === HttpStatus.NOT_FOUND) throw error;
@@ -131,5 +129,18 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
         'Something wrong in the server, try again later',
       );
     }
+  }
+
+  async updateField(id: string) {
+    const items = this._repository;
+
+    items.forEach((item) => {
+      const entries = Object.entries(item);
+      entries.forEach(([key, value]) => {
+        if ((key === 'artistId' || key === 'albumId') && value === id) {
+          item[key] = null;
+        }
+      });
+    });
   }
 }

@@ -41,6 +41,6 @@ export class AlbumService {
   }
 
   async remove(id: string) {
-    return this.databaseService.albums.delete(id);
+    return this.databaseService.remove(id, 'albums');
   }
 }

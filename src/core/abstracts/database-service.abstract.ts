@@ -3,7 +3,6 @@ import { Album } from 'src/album/entities/album.entity';
 import { CreateArtistDto } from 'src/artist/dto/create-artist.dto';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { InMemoryFavoriteRepository } from 'src/database/in-memory/in-memory-favorites-repository';
-import { Favorites } from 'src/database/interface/favorites.interface';
 import { CreateTrackDto } from 'src/track/dto/create-track.dto';
 import { Track } from 'src/track/entities/track.entity';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
@@ -16,11 +15,4 @@ export abstract class IDatabaseService {
   readonly albums: IGenericRepository<Album, CreateAlbumDto>;
   readonly tracks: IGenericRepository<Track, CreateTrackDto>;
   readonly favorites: InMemoryFavoriteRepository;
-  // readonly favorites: IGenericRepository<Favorites, Artist | Album | Track>;
-
-  // Favorites = {
-  //   artists: [],
-  //   albums: [],
-  //   tracks: [],
-  // };
 }

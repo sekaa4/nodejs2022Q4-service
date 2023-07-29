@@ -6,21 +6,14 @@ import {
 } from '@nestjs/common';
 import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
 import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
-import { IGenericRepository } from 'src/core/abstracts/generic-repository.abstract';
+import {
+  Entity,
+  IGenericRepository,
+  PayLoad,
+} from 'src/core/abstracts/generic-repository.abstract';
 import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/entities/user.entity';
-import { Album } from '../interface/album.interface';
-import { Artist } from '../interface/artist.interface';
-import { Track } from '../interface/track.interface';
-
-type PayLoad =
-  | UpdateUserDto
-  | UpdateArtistDto
-  | UpdateAlbumDto
-  | UpdateTrackDto;
-
-type Entity = Artist | Track | Album | User;
 
 export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
   implements IGenericRepository<T, K>

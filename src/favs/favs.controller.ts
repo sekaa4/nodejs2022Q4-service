@@ -16,18 +16,11 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiProperty,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { FavoritesEntity } from './entities/fav.entity';
-
-class ResponseObj {
-  @ApiProperty({
-    type: String,
-  })
-  message: string;
-}
+import { CreateResponse } from './entities/create-response';
 
 @ApiTags('Favs')
 @Controller('favs')
@@ -38,7 +31,7 @@ export class FavsController {
   @Header('Content-Type', 'application/json')
   @ApiCreatedResponse({
     description: 'Created Succesfully',
-    type: ResponseObj,
+    type: CreateResponse,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({
@@ -54,7 +47,7 @@ export class FavsController {
   @Header('Content-Type', 'application/json')
   @ApiCreatedResponse({
     description: 'Created Succesfully',
-    type: ResponseObj,
+    type: CreateResponse,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({
@@ -71,7 +64,7 @@ export class FavsController {
   @Header('Content-Type', 'application/json')
   @ApiCreatedResponse({
     description: 'Created Succesfully',
-    type: ResponseObj,
+    type: CreateResponse,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({

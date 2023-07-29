@@ -5,8 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { Favorites } from '../interface/favorites.interface';
-
-type Pathname = keyof Favorites;
+import { Pathname } from '../interface/pathname.type';
 
 export class InMemoryFavoriteRepository {
   private _repository: Favorites;

@@ -3,7 +3,6 @@ import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Track } from 'src/track/entities/track.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Favorites } from './interface/favorites.interface';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { IDatabaseService } from 'src/core/abstracts/database-service.abstract';
 import { InMemoryGenericRepository } from './in-memory/in-memory-generic-repository';
@@ -12,9 +11,8 @@ import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
 import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 import { InMemoryFavoriteRepository } from './in-memory/in-memory-favorites-repository';
 import { FavoritesEntity } from 'src/favs/entities/fav.entity';
-
-type Pathname = keyof Favorites;
-type Entities = Artist[] | Track[] | Album[];
+import { Entities } from './interface/entities.type';
+import { Pathname } from './interface/pathname.type';
 
 @Injectable()
 export class DatabaseService implements IDatabaseService {

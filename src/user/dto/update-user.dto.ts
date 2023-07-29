@@ -6,7 +6,7 @@ import { CreateUserDto } from './create-user.dto';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    description: "The user's old password",
   })
   @IsString()
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    description: "The user's new password",
   })
   @IsString()
   @IsNotEmpty()

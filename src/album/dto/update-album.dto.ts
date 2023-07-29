@@ -7,21 +7,20 @@ import {
   IsUUID,
   ValidateIf,
 } from 'class-validator';
-import { CONSTANTS } from 'src/utils/constants';
 import { CreateAlbumDto } from './create-album.dto';
 
 export class UpdateAlbumDto extends PartialType(CreateAlbumDto) {
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    example: 'Innuendo',
   })
   @IsString()
   @IsNotEmpty()
   name: string;
 
   @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
+    type: 'integer',
+    example: 1991,
   })
   @IsNumber()
   @IsNotEmpty()
@@ -29,9 +28,8 @@ export class UpdateAlbumDto extends PartialType(CreateAlbumDto) {
 
   @ApiProperty({
     type: String,
+    format: 'uuid',
     nullable: true,
-    description: 'This is a required property',
-    example: CONSTANTS.RANDOM_UUID,
   })
   @IsUUID()
   @ValidateIf((_object, value) => value !== null)

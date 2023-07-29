@@ -1,20 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CONSTANTS } from 'src/utils/constants';
 
 export class Artist {
   @ApiProperty({
     type: String,
-    example: CONSTANTS.RANDOM_UUID,
+    format: 'uuid',
   })
   id: string;
 
   @ApiProperty({
     type: String,
+    example: 'Freddie Mercury',
   })
   name: string;
 
   @ApiProperty({
     type: Boolean,
+    example: false,
   })
   grammy: boolean;
 }

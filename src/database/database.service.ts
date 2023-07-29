@@ -16,10 +16,19 @@ import { Pathname } from './interface/pathname.type';
 
 @Injectable()
 export class DatabaseService implements IDatabaseService {
-  users = new InMemoryGenericRepository<User, UpdateUserDto>([]);
-  readonly artists = new InMemoryGenericRepository<Artist, UpdateArtistDto>([]);
-  readonly albums = new InMemoryGenericRepository<Album, UpdateAlbumDto>([]);
-  readonly tracks = new InMemoryGenericRepository<Track, UpdateTrackDto>([]);
+  users = new InMemoryGenericRepository<User, UpdateUserDto>([], 'User');
+  readonly artists = new InMemoryGenericRepository<Artist, UpdateArtistDto>(
+    [],
+    'Artist',
+  );
+  readonly albums = new InMemoryGenericRepository<Album, UpdateAlbumDto>(
+    [],
+    'Album',
+  );
+  readonly tracks = new InMemoryGenericRepository<Track, UpdateTrackDto>(
+    [],
+    'Track',
+  );
   readonly favorites = new InMemoryFavoriteRepository();
 
   async create(id: string, pathname: Pathname) {
@@ -27,12 +36,12 @@ export class DatabaseService implements IDatabaseService {
 
     if (!item)
       throw new UnprocessableEntityException(
-        `${id} doesn't exist on base ${pathname}`,
+        `${pathname} with id doesn't exist `,
       );
 
     const result = await this.favorites.create(id, pathname);
 
-    return result && `${id} exist on base ${pathname} and added to favorites`;
+    return result && `Add ${pathname} to the favorites`;
   }
 
   async findMany() {

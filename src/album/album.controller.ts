@@ -18,8 +18,9 @@ import {
   ApiNotFoundResponse,
   ApiNoContentResponse,
   ApiTags,
+  ApiOperation,
+  ApiParam,
 } from '@nestjs/swagger';
-import { Track } from 'src/track/entities/track.entity';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -30,54 +31,74 @@ import { Album } from './entities/album.entity';
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
-  @Post()
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Add new album',
+    description: 'Add new album information',
+  })
   @ApiCreatedResponse({
-    description: 'Created Succesfully',
+    description: 'Album is created',
     type: Album,
   })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiBadRequestResponse({
+    description: 'Bad request, body does not contain required fields',
+  })
+  @Post()
   async create(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.create(createAlbumDto);
   }
 
-  @Get()
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Get albums list',
+    description: 'Gets all library alibums list',
+  })
   @ApiOkResponse({
     description: 'The resources were returned successfully',
     type: [Album],
   })
+  @Get()
   async findAll() {
     return this.albumService.findAll();
   }
 
-  @Get(':id')
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Get single album by id',
+    description: 'Gets single album by id',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
   @ApiOkResponse({
-    description: 'The resource was returned successfully',
+    description: 'The album was returned successfully',
     type: Album,
   })
   @ApiBadRequestResponse({
-    description: 'Bad Request, trackId is invalid(not uuid)',
+    description: 'Bad Request, album "id" is invalid (not uuid)',
   })
   @ApiNotFoundResponse({
-    description: 'Track not found',
+    description: 'Album was not found',
     status: HttpStatus.NOT_FOUND,
   })
+  @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.albumService.findOne(id);
   }
 
-  @Put(':id')
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Update album information',
+    description: 'Update library album information by UUID',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
   @ApiOkResponse({
-    description: 'The resource was updated successfully',
-    type: Track,
+    description: 'The album has been updated',
+    type: Album,
   })
   @ApiBadRequestResponse({
-    description: 'Bad Request, trackId is invalid(not uuid)',
+    description: 'Bad Request, album "id" is invalid (not uuid)',
   })
-  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiNotFoundResponse({ description: 'Album was not found' })
+  @Put(':id')
   async update(
     @Param(
       'id',
@@ -89,16 +110,21 @@ export class AlbumController {
     return this.albumService.update(id, updateAlbumDto);
   }
 
-  @Delete(':id')
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Delete album',
+    description: 'Delete album from library',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({
-    description: 'The resource was deleted successfully',
+    description: 'Deleted album successfully',
   })
-  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiNotFoundResponse({ description: 'Album was not found' })
   @ApiBadRequestResponse({
-    description: 'Bad Request, trackId is invalid(not uuid)',
+    description: 'Bad Request, album "id" is invalid (not uuid)',
   })
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.albumService.remove(id);
   }

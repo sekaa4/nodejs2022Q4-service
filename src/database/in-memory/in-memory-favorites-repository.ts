@@ -48,7 +48,10 @@ export class InMemoryFavoriteRepository {
 
       const indexId = items.findIndex((itemId) => itemId === id);
 
-      if (!~indexId) throw new NotFoundException(`${id} not found`);
+      if (!~indexId)
+        throw new NotFoundException(
+          `${pathname[0].toUpperCase() + pathname.slice(1, -1)} was not found`,
+        );
 
       items.splice(indexId, 1);
     } catch (error) {

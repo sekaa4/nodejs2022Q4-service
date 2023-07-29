@@ -6,7 +6,7 @@ import { CreateArtistDto } from './create-artist.dto';
 export class UpdateArtistDto extends PartialType(CreateArtistDto) {
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    example: 'Freddie Mercury',
   })
   @IsString()
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class UpdateArtistDto extends PartialType(CreateArtistDto) {
 
   @ApiProperty({
     type: Boolean,
-    description: 'This is a required property',
+    example: false,
   })
   @IsBoolean()
   @IsNotEmpty()

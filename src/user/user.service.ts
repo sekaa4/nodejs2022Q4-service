@@ -37,7 +37,7 @@ export class UserService {
   async findOne(id: string) {
     const user = await this.databaseService.users.findUnique(id);
 
-    if (!user) throw new NotFoundException(`User with id: <${id}> not found`);
+    if (!user) throw new NotFoundException(`User was not found`);
 
     delete user.password;
     return user;

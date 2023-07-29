@@ -1,27 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CONSTANTS } from 'src/utils/constants';
 
 export class Album {
   @ApiProperty({
     type: String,
-    example: CONSTANTS.RANDOM_UUID,
+    format: 'uuid',
   })
   id: string;
 
   @ApiProperty({
     type: String,
+    example: 'Innuendo',
   })
   name: string;
 
   @ApiProperty({
-    type: Number,
+    type: 'integer',
+    example: 1991,
   })
   year: number;
 
   @ApiProperty({
     type: String,
     nullable: true,
-    example: CONSTANTS.RANDOM_UUID,
+    format: 'uuid',
   })
   artistId: string | null;
 }

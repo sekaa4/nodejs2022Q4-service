@@ -7,13 +7,12 @@ import {
   IsUUID,
   ValidateIf,
 } from 'class-validator';
-import { CONSTANTS } from 'src/utils/constants';
 import { CreateTrackDto } from './create-track.dto';
 
 export class UpdateTrackDto extends PartialType(CreateTrackDto) {
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    example: 'Bohemian Rhapsody',
   })
   @IsString()
   @IsNotEmpty()
@@ -21,8 +20,8 @@ export class UpdateTrackDto extends PartialType(CreateTrackDto) {
 
   @ApiProperty({
     type: String,
-    example: CONSTANTS.RANDOM_UUID,
-    description: 'This is a required property',
+    format: 'uuid',
+    nullable: true,
   })
   @IsUUID()
   @ValidateIf((_object, value) => value !== null)
@@ -30,8 +29,8 @@ export class UpdateTrackDto extends PartialType(CreateTrackDto) {
 
   @ApiProperty({
     type: String,
-    example: CONSTANTS.RANDOM_UUID,
-    description: 'This is a required property',
+    format: 'uuid',
+    nullable: true,
   })
   @IsUUID()
   @ValidateIf((_object, value) => value !== null)
@@ -39,7 +38,8 @@ export class UpdateTrackDto extends PartialType(CreateTrackDto) {
 
   @ApiProperty({
     type: 'integer',
-    description: 'This is a required property',
+    description: 'In seconds',
+    example: 355,
   })
   @IsInt()
   @IsNotEmpty()

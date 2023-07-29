@@ -6,12 +6,11 @@ import {
   IsUUID,
   ValidateIf,
 } from 'class-validator';
-import { CONSTANTS } from 'src/utils/constants';
 
 export class CreateTrackDto {
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    example: 'Bohemian Rhapsody',
   })
   @IsString()
   @IsNotEmpty()
@@ -19,18 +18,17 @@ export class CreateTrackDto {
 
   @ApiProperty({
     type: String,
+    format: 'uuid',
     nullable: true,
-    description: 'This is a required property',
-    example: CONSTANTS.RANDOM_UUID,
   })
   @IsUUID()
   @ValidateIf((_object, value) => value !== null)
   artistId: string | null;
 
   @ApiProperty({
-    type: String || 'null',
-    description: 'This is a required property',
-    example: CONSTANTS.RANDOM_UUID,
+    type: String,
+    format: 'uuid',
+    nullable: true,
   })
   @IsUUID()
   @ValidateIf((_object, value) => value !== null)
@@ -38,7 +36,7 @@ export class CreateTrackDto {
 
   @ApiProperty({
     type: 'integer',
-    description: 'This is a required property',
+    description: 'In seconds',
   })
   @IsInt()
   @IsNotEmpty()

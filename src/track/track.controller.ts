@@ -21,6 +21,8 @@ import {
   ApiNotFoundResponse,
   ApiNoContentResponse,
   ApiTags,
+  ApiOperation,
+  ApiParam,
 } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
 
@@ -29,54 +31,73 @@ import { Track } from './entities/track.entity';
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
-  @Post()
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Add new track',
+    description: 'Add new track information',
+  })
   @ApiCreatedResponse({
-    description: 'Created Succesfully',
+    description: 'Created track successfully',
     type: Track,
   })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiBadRequestResponse({
+    description: 'Bad request, body does not contain required fields',
+  })
+  @Post()
   async create(@Body() createTrackDto: CreateTrackDto) {
     return this.trackService.create(createTrackDto);
   }
 
-  @Get()
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Get tracks list',
+    description: 'Gets all library tracks list',
+  })
   @ApiOkResponse({
-    description: 'The resources were returned successfully',
+    description: 'The tracks were returned successfully',
     type: [Track],
   })
+  @Get()
   async findAll() {
     return this.trackService.findAll();
   }
 
-  @Get(':id')
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Get single track by id',
+    description: 'Gets single track by id',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
   @ApiOkResponse({
-    description: 'The resource was returned successfully',
+    description: 'The track was returned successfully',
     type: Track,
   })
   @ApiBadRequestResponse({
-    description: 'Bad Request, trackId is invalid(not uuid)',
+    description: 'Bad Request, track "id" is invalid (not uuid)',
   })
   @ApiNotFoundResponse({
-    description: 'Track not found',
-    status: HttpStatus.NOT_FOUND,
+    description: 'Track was not found',
   })
+  @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.trackService.findOne(id);
   }
 
   @Put(':id')
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Update track information',
+    description: 'Update library track information by UUID',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
   @ApiOkResponse({
-    description: 'The resource was updated successfully',
+    description: 'The track has been updated',
     type: Track,
   })
   @ApiBadRequestResponse({
-    description: 'Bad Request, trackId is invalid(not uuid)',
+    description: 'Bad Request, track "id" is invalid (not uuid)',
   })
-  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiNotFoundResponse({ description: 'Track was not found' })
   async update(
     @Param(
       'id',
@@ -88,16 +109,21 @@ export class TrackController {
     return this.trackService.update(id, updateTrackDto);
   }
 
-  @Delete(':id')
   @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Delete track',
+    description: 'Delete track from library',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({
-    description: 'The resource was deleted successfully',
+    description: 'Deleted track successfully',
   })
-  @ApiNotFoundResponse({ description: 'Track not found' })
+  @ApiNotFoundResponse({ description: 'Track was not found' })
   @ApiBadRequestResponse({
-    description: 'Bad Request, trackId is invalid(not uuid)',
+    description: 'Bad Request, track "id" is invalid (not uuid)',
   })
+  @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.trackService.remove(id);
   }

@@ -29,7 +29,7 @@ export class AlbumService {
   async findOne(id: string) {
     const user = await this.databaseService.albums.findUnique(id);
 
-    if (!user) throw new NotFoundException(`Album with id: <${id}> not found`);
+    if (!user) throw new NotFoundException(`Album was not found`);
 
     return user;
   }

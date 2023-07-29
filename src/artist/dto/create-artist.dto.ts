@@ -4,7 +4,7 @@ import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 export class CreateArtistDto {
   @ApiProperty({
     type: String,
-    description: 'This is a required property',
+    example: 'Freddie Mercury',
   })
   @IsString()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateArtistDto {
 
   @ApiProperty({
     type: Boolean,
-    description: 'This is a required property',
+    example: false,
   })
   @IsBoolean()
   @IsNotEmpty()

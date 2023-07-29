@@ -29,7 +29,7 @@ export class TrackService {
   async findOne(id: string) {
     const track = await this.databaseService.tracks.findUnique(id);
 
-    if (!track) throw new NotFoundException(`Track with id: <${id}> not found`);
+    if (!track) throw new NotFoundException(`Track was not found`);
 
     return track;
   }

@@ -29,8 +29,7 @@ export class ArtistService {
   async findOne(id: string) {
     const artist = await this.databaseService.artists.findUnique(id);
 
-    if (!artist)
-      throw new NotFoundException(`Artist with id: <${id}> not found`);
+    if (!artist) throw new NotFoundException(`Artist was not found`);
 
     return artist;
   }

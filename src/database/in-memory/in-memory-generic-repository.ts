@@ -19,9 +19,11 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
   implements IGenericRepository<T, K>
 {
   private _repository: T[];
+  private _name: string;
 
-  constructor(private repository: T[]) {
+  constructor(private repository: T[], private name: string) {
     this._repository = repository;
+    this._name = name;
   }
 
   async create(payload: T): Promise<T> {
@@ -74,7 +76,7 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
         const users = this._repository as unknown as User[];
         const user = users.find((user) => user.id === id);
 
-        if (!user) throw new NotFoundException(`User ${id} not found`);
+        if (!user) throw new NotFoundException(`User was not found`);
 
         if (user.password === oldPassword) {
           user.password = newPassword;
@@ -84,14 +86,13 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
           return { ...user } as unknown as T;
         }
 
-        throw new ForbiddenException(
-          `User ${id} with oldPassword "${oldPassword}" is wrong, please enter correct password`,
-        );
+        throw new ForbiddenException(`User oldPassword is wrong`);
       }
 
       const items = this._repository;
       const itemIndex = items.findIndex((item) => item.id === id);
-      if (!~itemIndex) throw new NotFoundException(`${id} not found`);
+      if (!~itemIndex)
+        throw new NotFoundException(`${this._name} was not found`);
 
       items[itemIndex] = { ...items[itemIndex], ...payload };
 
@@ -113,7 +114,8 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
     try {
       const items = this._repository;
       const itemIndex = items.findIndex((item) => item.id === id);
-      if (!~itemIndex) throw new NotFoundException(`${id} not found`);
+      if (!~itemIndex)
+        throw new NotFoundException(`${this.name} was not found`);
 
       items.splice(itemIndex, 1);
     } catch (error) {

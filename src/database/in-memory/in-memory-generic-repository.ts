@@ -18,17 +18,14 @@ import { User } from 'src/user/entities/user.entity';
 export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
   implements IGenericRepository<T, K>
 {
-  private _repository: T[];
-  private _name: string;
-
-  constructor(private repository: T[], private name: string) {
-    this._repository = repository;
-    this._name = name;
-  }
+  constructor(
+    private repository: T[],
+    private name: string,
+  ) {}
 
   async create(payload: T): Promise<T> {
     try {
-      this._repository.push({ ...payload });
+      this.repository.push({ ...payload });
 
       return payload;
     } catch (error) {
@@ -40,7 +37,7 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
 
   async findMany() {
     try {
-      const items = [...this._repository];
+      const items = [...this.repository];
 
       return items;
     } catch (error) {
@@ -52,7 +49,7 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
 
   async findUnique(id: string) {
     try {
-      const items = [...this._repository];
+      const items = [...this.repository];
 
       const item = items.find((item) => item.id === id);
 
@@ -73,7 +70,7 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
     try {
       if ('newPassword' in payload) {
         const { newPassword, oldPassword } = payload;
-        const users = this._repository as unknown as User[];
+        const users = this.repository as unknown as User[];
         const user = users.find((user) => user.id === id);
 
         if (!user) throw new NotFoundException(`User was not found`);
@@ -89,10 +86,10 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
         throw new ForbiddenException(`User oldPassword is wrong`);
       }
 
-      const items = this._repository;
+      const items = this.repository;
       const itemIndex = items.findIndex((item) => item.id === id);
       if (!~itemIndex)
-        throw new NotFoundException(`${this._name} was not found`);
+        throw new NotFoundException(`${this.name} was not found`);
 
       items[itemIndex] = { ...items[itemIndex], ...payload };
 
@@ -112,7 +109,7 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
 
   async delete(id: string) {
     try {
-      const items = this._repository;
+      const items = this.repository;
       const itemIndex = items.findIndex((item) => item.id === id);
       if (!~itemIndex)
         throw new NotFoundException(`${this.name} was not found`);
@@ -127,7 +124,7 @@ export class InMemoryGenericRepository<T extends Entity, K extends PayLoad>
   }
 
   async updateField(id: string) {
-    const items = this._repository;
+    const items = this.repository;
 
     items.forEach((item) => {
       const entries = Object.entries(item);

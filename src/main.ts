@@ -1,18 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import 'dotenv/config';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-const PORT = process.env.PORT || 4000;
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configDotEnv = app.get(ConfigService);
+  const port = configDotEnv.get<number>('PORT_API');
+
+  console.log(port);
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
     .setDescription('HLS API with CRUD functionality')
     .setVersion('1.0')
-    .addServer(`http://localhost:${PORT}`)
+    .addServer(`http://localhost:${port}`)
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
@@ -33,6 +35,6 @@ async function bootstrap() {
   app.enableCors();
 
   SwaggerModule.setup('doc', app, document);
-  await app.listen(PORT);
+  await app.listen(port || 4000);
 }
 bootstrap();

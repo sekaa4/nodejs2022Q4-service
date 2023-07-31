@@ -49,18 +49,24 @@ export class DatabaseService implements IDatabaseService {
 
     const keys = Object.keys(entitiesObject) as unknown as Pathname[];
 
-    const responseObject = await keys.reduce(async (acc, path) => {
-      const reduceEntitiesObject = await acc;
-      const entitiesId = entitiesObject[path];
-      const entities = await entitiesId.reduce(async (acc, id) => {
-        const items = await acc;
-        const entity = await this[path].findUnique(id);
+    const responseObject = await keys.reduce(
+      async (acc, path) => {
+        const reduceEntitiesObject = await acc;
+        const entitiesId = entitiesObject[path];
+        const entities = await entitiesId.reduce(
+          async (acc, id) => {
+            const items = await acc;
+            const entity = await this[path].findUnique(id);
 
-        return entity ? [...items, entity] : items;
-      }, Promise.resolve([] as Entities));
+            return entity ? [...items, entity] : items;
+          },
+          Promise.resolve([] as Entities),
+        );
 
-      return { ...reduceEntitiesObject, [path]: entities };
-    }, Promise.resolve({} as FavoritesEntity));
+        return { ...reduceEntitiesObject, [path]: entities };
+      },
+      Promise.resolve({} as FavoritesEntity),
+    );
 
     return responseObject;
   }

@@ -25,6 +25,7 @@ services:
       PORT: ${PORT}
     networks:
       - default
+    command: npm run start:dev
 
   postgres:
     container_name: postgres

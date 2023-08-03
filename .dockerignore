@@ -5,4 +5,4 @@ postgres-db
 Dockerfile
 test
 docker-compose.yml
-.env
+.dockerignore

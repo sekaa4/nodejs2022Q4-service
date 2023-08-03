@@ -23,9 +23,9 @@ services:
       - postgres
     environment:
       PORT: ${PORT}
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"
     networks:
       - default
-    command: npm run start:dev
 
   postgres:
     container_name: postgres

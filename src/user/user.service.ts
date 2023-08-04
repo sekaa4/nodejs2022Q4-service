@@ -75,7 +75,6 @@ export class UserService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        console.log('User not found');
         throw new NotFoundException(`User was not found`);
       } else throw error;
     }

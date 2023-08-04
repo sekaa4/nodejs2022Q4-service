@@ -34,7 +34,7 @@ model Album {
   name     String
   year     Int
   artistId String? @map("artist_id")
-  artist   Artist? @relation(fields: [artistId], references: [id])
+  artist   Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
   tracks   Track[]
 
   @@map("albums")
@@ -46,8 +46,8 @@ model Track {
   artistId String? @map("artist_id")
   albumId  String? @map("album_id")
   duration Int
-  artist   Artist? @relation(fields: [artistId], references: [id])
-  album    Album?  @relation(fields: [albumId], references: [id])
+  artist   Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  album    Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
 
   @@map("tracks")
 }

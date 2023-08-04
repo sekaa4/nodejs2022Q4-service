@@ -1,33 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
-import { v4 as uuid } from 'uuid';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/database/prisma/prisma.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: PrismaService) {}
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
-    const artistPayload = {
-      id: uuid(),
-      ...createArtistDto,
-    };
+    const artist = await this.databaseService.artist.create({
+      data: createArtistDto,
+    });
 
-    const track = await this.databaseService.artists.create(artistPayload);
-
-    return track;
+    return artist;
   }
 
   async findAll() {
-    const artists = await this.databaseService.artists.findMany();
+    const artists = await this.databaseService.artist.findMany();
 
     return artists;
   }
 
   async findOne(id: string) {
-    const artist = await this.databaseService.artists.findUnique(id);
+    const artist = await this.databaseService.artist.findUnique({
+      where: { id },
+    });
 
     if (!artist) throw new NotFoundException(`Artist was not found`);
 
@@ -35,12 +34,35 @@ export class ArtistService {
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {
-    const user = await this.databaseService.artists.update(id, updateArtistDto);
-
-    return user;
+    try {
+      return await this.databaseService.artist.update({
+        where: { id: id },
+        data: updateArtistDto,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`Artist was not found`);
+      } else throw error;
+    }
   }
 
   async remove(id: string) {
-    return this.databaseService.remove(id, 'artists');
+    try {
+      await this.databaseService.artist.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`Artist was not found`);
+      } else throw error;
+    }
   }
 }

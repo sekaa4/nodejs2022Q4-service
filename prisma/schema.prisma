@@ -12,9 +12,11 @@ model User {
   id        String   @id @default(uuid())
   login     String
   password  String
-  version   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  version   Int @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
 }
 
 model Artist {
@@ -23,25 +25,31 @@ model Artist {
   grammy Boolean @default(false)
   albums Album[]
   tracks Track[]
+
+  @@map("artists")
 }
 
 model Album {
   id       String  @id @default(uuid())
   name     String
   year     Int
-  artistId String?
+  artistId String? @map("artist_id")
   artist   Artist? @relation(fields: [artistId], references: [id])
   tracks   Track[]
+
+  @@map("albums")
 }
 
 model Track {
   id       String  @id @default(uuid())
   name     String
-  artistId String?
-  albumId  String?
+  artistId String? @map("artist_id")
+  albumId  String? @map("album_id")
   duration Int
   artist   Artist? @relation(fields: [artistId], references: [id])
   album    Album?  @relation(fields: [albumId], references: [id])
+
+  @@map("tracks")
 }
 
 model Favorites {

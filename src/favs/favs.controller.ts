@@ -40,9 +40,9 @@ export class FavsController {
   })
   @Get()
   async findAll() {
-    return this.favsService.findAll();
+    return await this.favsService.findAll();
   }
-
+  ////////////////////////
   @Header('Content-Type', 'application/json')
   @ApiOperation({
     summary: 'Add track to the favorites',
@@ -61,56 +61,8 @@ export class FavsController {
   })
   @Post('/track/:id')
   async createTrack(@Param('id', ParseUUIDPipe) id: string) {
-    const message = await this.favsService.create(id, 'tracks');
+    const message = await this.favsService.createTrack(id);
     const response = { message };
-    return response;
-  }
-
-  @Header('Content-Type', 'application/json')
-  @ApiOperation({
-    summary: 'Add album to the favorites',
-    description: 'Add album to the favorites',
-  })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
-  @ApiCreatedResponse({
-    description: 'Added album "id" to the favorites',
-    type: CreateResponseDto,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad Request, album "id" is invalid (not uuid)',
-  })
-  @ApiUnprocessableEntityResponse({
-    description: "Album with id doesn't exist",
-  })
-  @Post('/album/:id')
-  async createAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    const message = await this.favsService.create(id, 'albums');
-    const response = { message };
-
-    return response;
-  }
-
-  @Header('Content-Type', 'application/json')
-  @ApiOperation({
-    summary: 'Add artist to the favorites',
-    description: 'Add artist to the favorites',
-  })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
-  @ApiCreatedResponse({
-    description: 'Added artist "id" to the favorites',
-    type: CreateResponseDto,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad Request, artist "id" is invalid (not uuid)',
-  })
-  @ApiUnprocessableEntityResponse({
-    description: "Artist with id doesn't exist",
-  })
-  @Post('/artist/:id')
-  async createArtist(@Param('id', ParseUUIDPipe) id: string) {
-    const message = await this.favsService.create(id, 'artists');
-    const response = { message };
-
     return response;
   }
 
@@ -130,9 +82,32 @@ export class FavsController {
   })
   @Delete('track/:id')
   async removeTrack(@Param('id') id: string) {
-    return this.favsService.remove(id, 'tracks');
+    return this.favsService.removeTrack(id);
   }
+  ////////////////////////
+  @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Add album to the favorites',
+    description: 'Add album to the favorites',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
+  @ApiCreatedResponse({
+    description: 'Added album "id" to the favorites',
+    type: CreateResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, album "id" is invalid (not uuid)',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Album with id doesn't exist",
+  })
+  @Post('/album/:id')
+  async createAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    const message = await this.favsService.createAlbum(id);
+    const response = { message };
 
+    return response;
+  }
   @Header('Content-Type', 'application/json')
   @ApiOperation({
     summary: 'Delete album from favorites',
@@ -149,7 +124,31 @@ export class FavsController {
   })
   @Delete('album/:id')
   async removeAlbum(@Param('id') id: string) {
-    return this.favsService.remove(id, 'albums');
+    return this.favsService.removeAlbum(id);
+  }
+  ////////////////////////
+  @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Add artist to the favorites',
+    description: 'Add artist to the favorites',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
+  @ApiCreatedResponse({
+    description: 'Added artist "id" to the favorites',
+    type: CreateResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, artist "id" is invalid (not uuid)',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Artist with id doesn't exist",
+  })
+  @Post('/artist/:id')
+  async createArtist(@Param('id', ParseUUIDPipe) id: string) {
+    const message = await this.favsService.createArtist(id);
+    const response = { message };
+
+    return response;
   }
 
   @Header('Content-Type', 'application/json')
@@ -167,7 +166,7 @@ export class FavsController {
     description: 'Bad Request, artist "id" is invalid (not uuid)',
   })
   @Delete('artist/:id')
-  async removeArtist(@Param('id') id: string) {
-    return this.favsService.remove(id, 'artists');
+  async removeArtist(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favsService.removeArtist(id);
   }
 }

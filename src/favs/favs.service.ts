@@ -70,7 +70,6 @@ export class FavsService {
 
       return 'Add artist to the favorites';
     } catch (error) {
-      console.log('error', error);
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2003'

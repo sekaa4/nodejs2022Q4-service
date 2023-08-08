@@ -42,7 +42,7 @@ export class FavsController {
   async findAll() {
     return await this.favsService.findAll();
   }
-  ////////////////////////
+
   @Header('Content-Type', 'application/json')
   @ApiOperation({
     summary: 'Add track to the favorites',
@@ -84,7 +84,7 @@ export class FavsController {
   async removeTrack(@Param('id') id: string) {
     return this.favsService.removeTrack(id);
   }
-  ////////////////////////
+
   @Header('Content-Type', 'application/json')
   @ApiOperation({
     summary: 'Add album to the favorites',
@@ -126,7 +126,7 @@ export class FavsController {
   async removeAlbum(@Param('id') id: string) {
     return this.favsService.removeAlbum(id);
   }
-  ////////////////////////
+
   @Header('Content-Type', 'application/json')
   @ApiOperation({
     summary: 'Add artist to the favorites',

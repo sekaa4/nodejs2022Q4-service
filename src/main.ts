@@ -13,7 +13,6 @@ async function bootstrap() {
   const configDotEnv = app.get(ConfigService);
   const port = configDotEnv.get<number>('PORT_API');
 
-  console.log(port);
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
     .setDescription('HLS API with CRUD functionality')

@@ -13,7 +13,10 @@ services:
   node:
     container_name: node
     restart: always
-    build: .
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: development
     volumes:
       - ./src:/usr/app/src
       - /usr/app/node_modules
@@ -21,11 +24,14 @@ services:
       - ${PORT}:${PORT}
     depends_on:
       - postgres
+    env_file:
+      - .env
     environment:
       PORT: ${PORT}
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"
     networks:
       - default
+    command: npm run start:dev
 
   postgres:
     container_name: postgres
@@ -41,5 +47,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./:/logs:z
+    command: postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/logs
 volumes:
   pgdata:

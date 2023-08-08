@@ -1,7 +1,6 @@
-FROM node:18.16-alpine
+FROM node:18.16-alpine As development
 WORKDIR /usr/app
 COPY package*.json .
-RUN npm ci && npm cache clean --force
+RUN npm ci
 COPY . .
 ENTRYPOINT ["./entrypoint.sh"]
-CMD [ "npm", "run", "start:dev" ]

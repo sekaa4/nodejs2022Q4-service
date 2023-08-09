@@ -61,9 +61,12 @@ npm run docker:scan
 
 ### Migrations
 
-Migrations execute automatically when ```docker-compose``` command complete and create database entities, if you want to migrate manually you can write next command in your terminal (Note: database entities reset):
+Migrations execute automatically when ```docker-compose``` command complete and create database entities.
+
+If you want to migrate manually you can execute next command in your terminal:
 
 ```
+rm -rf ./prisma/migrations
 npx prisma migrate dev --name my-custom-migrate
 ```
 

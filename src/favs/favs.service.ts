@@ -37,30 +37,16 @@ export class FavsService {
       },
     });
 
-    if (favs.length === 0)
-      return await this.databaseService.favorites.create({
-        select: {
-          albums: true,
-          tracks: true,
-          artists: true,
-        },
-      });
-
-    if (Array.isArray(favs)) {
-      const favorites = favs[0];
-      return {
-        artists: favorites.artists.map((artistInfo) => artistInfo.artist),
-        albums: favorites.albums.map((albumInfo) => albumInfo.album),
-        tracks: favorites.tracks.map((trackInfo) => trackInfo.track),
-      };
-    }
-
-    return favs;
+    const favorites = favs[0];
+    return {
+      artists: favorites.artists.map((artistInfo) => artistInfo.artist),
+      albums: favorites.albums.map((albumInfo) => albumInfo.album),
+      tracks: favorites.tracks.map((trackInfo) => trackInfo.track),
+    };
   }
 
   async createArtist(id: string): Promise<string> {
     try {
-      await this.databaseService.favorites.findMany();
       await this.databaseService.artistToFavorite.create({
         data: {
           favoritesId: this.#favoritesId,
@@ -98,7 +84,6 @@ export class FavsService {
 
   async createAlbum(id: string): Promise<string> {
     try {
-      await this.databaseService.favorites.findMany();
       await this.databaseService.albumToFavorite.create({
         data: {
           favoritesId: this.#favoritesId,
@@ -136,7 +121,6 @@ export class FavsService {
 
   async createTrack(id: string): Promise<string> {
     try {
-      await this.databaseService.favorites.findMany();
       await this.databaseService.trackToFavorite.create({
         data: {
           favoritesId: this.#favoritesId,

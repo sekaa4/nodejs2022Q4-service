@@ -8,15 +8,23 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
   constructor(private readonly databaseService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+    const { login, password } = createUserDto;
+    const hashPassword = await bcrypt.hash(password, +process.env.CRYPT_SALT);
     const user = await this.databaseService.user.create({
-      data: createUserDto,
+      data: { login, password: hashPassword },
     });
+    // if ((await this.databaseService.favorites.count()) === 0) {
+    //   await this.databaseService.favorites.create({});
+    // } else {
+    //   console.log('Default author already created');
+    // }
 
     return user;
   }

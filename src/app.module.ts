@@ -9,6 +9,7 @@ import { FavsModule } from './favs/favs.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './database/prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
 import config from './config/configuration';
 
 @Module({
@@ -24,6 +25,7 @@ import config from './config/configuration';
     FavsModule,
     DatabaseModule,
     PrismaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,6 +6,9 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiForbiddenResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiUnauthorizedResponse, //
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
 
@@ -21,7 +24,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiTags('Signup')
-  @ApiOperation({ description: 'Create a new user', summary: 'Create user' })
+  @ApiOperation({ description: 'Signup a user', summary: 'Signup a user' })
   @ApiCreatedResponse({
     description: 'The user has been created',
     type: User,
@@ -29,7 +32,7 @@ export class AuthController {
   @ApiBadRequestResponse({
     description: 'Bad request, body does not contain required fields',
   })
-  @ApiForbiddenResponse({
+  @ApiConflictResponse({
     description:
       'Registration failed, user with such login exist, credentials taken',
   })
@@ -40,7 +43,10 @@ export class AuthController {
   }
 
   @ApiTags('Login')
-  @ApiOperation({ description: 'Login user', summary: 'Login user' })
+  @ApiOperation({
+    description: 'Logins a user and returns a JWT-token',
+    summary: 'Login user',
+  })
   @ApiOkResponse({
     description: 'The user has been logged.',
     type: Auth,
@@ -60,6 +66,7 @@ export class AuthController {
   }
 
   @ApiTags('Refresh token')
+  @ApiBearerAuth()
   @ApiOperation({
     description: 'Get new pair of Access token and Refresh token',
     summary: 'New pair of Access token and Refresh token',
@@ -68,8 +75,7 @@ export class AuthController {
     description: 'New pair of Access token and Refresh token created',
     type: Auth,
   })
-  //401
-  @ApiBadRequestResponse({
+  @ApiUnauthorizedResponse({
     description:
       'Bad request, body does not contain required fields, no refreshToken in body',
   })
@@ -79,11 +85,11 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Post('/refresh')
   async refreshTokens(
-    @Body() updateAuthDto: UpdateAuthUserDto,
+    @Body() updateAuthUserDto: UpdateAuthUserDto,
     @Req() req: RefreshRequest,
   ) {
     const response = await this.authService.refreshTokens(
-      updateAuthDto,
+      updateAuthUserDto,
       req.user,
     );
 

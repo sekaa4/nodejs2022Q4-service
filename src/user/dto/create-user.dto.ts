@@ -12,6 +12,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     type: String,
+    format: 'password',
     description: "The user's password",
   })
   @IsString()

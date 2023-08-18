@@ -71,6 +71,12 @@ export class AuthService {
     accessPayload: TokenExpire,
   ) {
     const { refreshToken } = updateAuthUserDto;
+
+    if (!refreshToken)
+      throw new UnauthorizedException(
+        'Bad request, body does not contain required fields, no refreshToken in body',
+      );
+
     try {
       const payload: TokenExpire = await this.jwtService.verifyAsync(
         refreshToken,
@@ -83,13 +89,15 @@ export class AuthService {
         accessPayload.login === payload.login &&
         accessPayload.userId === payload.userId
       ) {
+        const newPayload = { login: payload.login, userId: payload.userId };
         const [accessToken, refreshToken] = await Promise.all([
-          this.jwtService.signAsync(payload),
-          this.jwtService.signAsync(payload, {
+          this.jwtService.signAsync(newPayload),
+          this.jwtService.signAsync(newPayload, {
             expiresIn: this.configService.get('TOKEN_REFRESH_EXPIRE_TIME'),
             secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
           }),
         ]);
+
         return {
           accessToken,
           refreshToken,
@@ -98,7 +106,9 @@ export class AuthService {
 
       throw new UnauthorizedException();
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException(
+        'Authentication failed, Refresh token is invalid or expired',
+      );
     }
   }
 }

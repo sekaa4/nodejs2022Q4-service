@@ -18,12 +18,13 @@ async function bootstrap() {
     .setDescription('HLS API with CRUD functionality')
     .setVersion('1.0')
     .addServer(`http://localhost:${port}`)
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
+      // whitelist: true,
       transform: true,
       exceptionFactory: (errors) => {
         const result = errors.map((error) => ({

@@ -10,6 +10,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -20,13 +21,18 @@ import {
   ApiTags,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 
 @ApiTags('Artist')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
@@ -43,6 +49,9 @@ export class ArtistController {
   @ApiBadRequestResponse({
     description: 'Bad request, body does not contain required fields',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @Post()
   async create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.create(createArtistDto);
@@ -56,6 +65,9 @@ export class ArtistController {
   @ApiOkResponse({
     description: 'The artists were returned successfully',
     type: [Artist],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @Get()
   async findAll() {
@@ -74,6 +86,9 @@ export class ArtistController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, artist "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({
     description: 'Artist was not found',
@@ -96,6 +111,9 @@ export class ArtistController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, artist "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({ description: 'Artist was not found' })
   @Put(':id')
@@ -120,10 +138,13 @@ export class ArtistController {
   @ApiNoContentResponse({
     description: 'Deleted artist successfully',
   })
-  @ApiNotFoundResponse({ description: 'Artist was not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, artist "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'Artist was not found' })
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.artistService.remove(id);

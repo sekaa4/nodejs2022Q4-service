@@ -10,6 +10,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -20,13 +21,18 @@ import {
   ApiTags,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 
 @ApiTags('Album')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
@@ -57,6 +63,9 @@ export class AlbumController {
     description: 'The resources were returned successfully',
     type: [Album],
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @Get()
   async findAll() {
     return this.albumService.findAll();
@@ -74,6 +83,9 @@ export class AlbumController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, album "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({
     description: 'Album was not found',
@@ -96,6 +108,9 @@ export class AlbumController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, album "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({ description: 'Album was not found' })
   @Put(':id')
@@ -120,10 +135,13 @@ export class AlbumController {
   @ApiNoContentResponse({
     description: 'Deleted album successfully',
   })
-  @ApiNotFoundResponse({ description: 'Album was not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, album "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'Album was not found' })
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.albumService.remove(id);

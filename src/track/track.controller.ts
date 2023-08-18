@@ -10,6 +10,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -23,10 +24,15 @@ import {
   ApiTags,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Track')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
@@ -42,6 +48,9 @@ export class TrackController {
   })
   @ApiBadRequestResponse({
     description: 'Bad request, body does not contain required fields',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @Post()
   async create(@Body() createTrackDto: CreateTrackDto) {
@@ -75,6 +84,9 @@ export class TrackController {
   @ApiBadRequestResponse({
     description: 'Bad Request, track "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @ApiNotFoundResponse({
     description: 'Track was not found',
   })
@@ -96,6 +108,9 @@ export class TrackController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, track "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({ description: 'Track was not found' })
   async update(
@@ -119,10 +134,13 @@ export class TrackController {
   @ApiNoContentResponse({
     description: 'Deleted track successfully',
   })
-  @ApiNotFoundResponse({ description: 'Track was not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, track "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'Track was not found' })
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.trackService.remove(id);

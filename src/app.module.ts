@@ -11,6 +11,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './database/prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import config from './config/configuration';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions-filter/all-exceptions.filter';
 
 @Module({
   imports: [
@@ -28,6 +30,12 @@ import config from './config/configuration';
     PrismaModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}

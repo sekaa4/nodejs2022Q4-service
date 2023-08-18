@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import {
   ApiOperation,
   ApiCreatedResponse,
@@ -7,34 +7,39 @@ import {
   ApiOkResponse,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
+import { User } from 'src/user/entities/user.entity';
 
 import { AuthService } from './auth.service';
 import { CreateAuthUserDto } from './dto/create-auth.dto';
-import { CreateResponseAuthDto } from './dto/create-response.dto';
 import { UpdateAuthUserDto } from './dto/update-auth.dto';
 import { Auth } from './entities/auth.entity';
+import { RefreshRequest } from './types/refresh-request';
+import { AuthGuard } from './auth.guard';
 
-@ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiTags('Signup')
   @ApiOperation({ description: 'Create a new user', summary: 'Create user' })
   @ApiCreatedResponse({
     description: 'The user has been created',
-    type: CreateResponseAuthDto,
+    type: User,
   })
   @ApiBadRequestResponse({
     description: 'Bad request, body does not contain required fields',
   })
+  @ApiForbiddenResponse({
+    description:
+      'Registration failed, user with such login exist, credentials taken',
+  })
   @Post('/signup')
   async signUp(@Body() createAuthUserDto: CreateAuthUserDto) {
-    const message = await this.authService.signUp(createAuthUserDto);
-    const response = { message };
-
-    return response;
+    const user = await this.authService.signUp(createAuthUserDto);
+    return new User(user);
   }
 
+  @ApiTags('Login')
   @ApiOperation({ description: 'Login user', summary: 'Login user' })
   @ApiOkResponse({
     description: 'The user has been logged.',
@@ -49,19 +54,19 @@ export class AuthController {
   })
   @Post('/login')
   async signIn(@Body() createAuthUserDto: CreateAuthUserDto) {
-    const message = await this.authService.signIn(createAuthUserDto);
-    const response = { message };
+    const response = await this.authService.signIn(createAuthUserDto);
 
     return response;
   }
 
+  @ApiTags('Refresh token')
   @ApiOperation({
     description: 'Get new pair of Access token and Refresh token',
     summary: 'New pair of Access token and Refresh token',
   })
   @ApiOkResponse({
     description: 'New pair of Access token and Refresh token created',
-    type: String,
+    type: Auth,
   })
   //401
   @ApiBadRequestResponse({
@@ -71,21 +76,17 @@ export class AuthController {
   @ApiForbiddenResponse({
     description: 'Authentication failed, Refresh token is invalid or expired',
   })
+  @UseGuards(AuthGuard)
   @Post('/refresh')
-  async refreshTokens(@Body() updateAuthDto: UpdateAuthUserDto) {
-    const message = await this.authService.refreshTokens(updateAuthDto);
-    const response = { message };
+  async refreshTokens(
+    @Body() updateAuthDto: UpdateAuthUserDto,
+    @Req() req: RefreshRequest,
+  ) {
+    const response = await this.authService.refreshTokens(
+      updateAuthDto,
+      req.user,
+    );
 
     return response;
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.authService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.authService.findOne(+id);
-  // }
 }

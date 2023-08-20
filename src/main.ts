@@ -1,6 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  ValidationPipe,
+} from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
@@ -9,7 +13,6 @@ async function bootstrap() {
   const configDotEnv = app.get(ConfigService);
   const port = configDotEnv.get<number>('PORT_API');
 
-  console.log(port);
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
     .setDescription('HLS API with CRUD functionality')
@@ -32,6 +35,7 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.enableCors();
 
   SwaggerModule.setup('doc', app, document);

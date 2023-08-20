@@ -40,7 +40,7 @@ export class FavsController {
   })
   @Get()
   async findAll() {
-    return this.favsService.findAll();
+    return await this.favsService.findAll();
   }
 
   @Header('Content-Type', 'application/json')
@@ -61,9 +61,28 @@ export class FavsController {
   })
   @Post('/track/:id')
   async createTrack(@Param('id', ParseUUIDPipe) id: string) {
-    const message = await this.favsService.create(id, 'tracks');
+    const message = await this.favsService.createTrack(id);
     const response = { message };
     return response;
+  }
+
+  @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Delete track from favorites',
+    description: ' Delete track from favorites',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Deleted track successfully',
+  })
+  @ApiNotFoundResponse({ description: 'Track was not found' })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, track "id" is invalid (not uuid)',
+  })
+  @Delete('track/:id')
+  async removeTrack(@Param('id') id: string) {
+    return this.favsService.removeTrack(id);
   }
 
   @Header('Content-Type', 'application/json')
@@ -84,10 +103,28 @@ export class FavsController {
   })
   @Post('/album/:id')
   async createAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    const message = await this.favsService.create(id, 'albums');
+    const message = await this.favsService.createAlbum(id);
     const response = { message };
 
     return response;
+  }
+  @Header('Content-Type', 'application/json')
+  @ApiOperation({
+    summary: 'Delete album from favorites',
+    description: 'Delete album from favorites',
+  })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Deleted album successfully',
+  })
+  @ApiNotFoundResponse({ description: 'Album was not found' })
+  @ApiBadRequestResponse({
+    description: 'Bad Request, album "id" is invalid (not uuid)',
+  })
+  @Delete('album/:id')
+  async removeAlbum(@Param('id') id: string) {
+    return this.favsService.removeAlbum(id);
   }
 
   @Header('Content-Type', 'application/json')
@@ -108,48 +145,10 @@ export class FavsController {
   })
   @Post('/artist/:id')
   async createArtist(@Param('id', ParseUUIDPipe) id: string) {
-    const message = await this.favsService.create(id, 'artists');
+    const message = await this.favsService.createArtist(id);
     const response = { message };
 
     return response;
-  }
-
-  @Header('Content-Type', 'application/json')
-  @ApiOperation({
-    summary: 'Delete track from favorites',
-    description: ' Delete track from favorites',
-  })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({
-    description: 'Deleted track successfully',
-  })
-  @ApiNotFoundResponse({ description: 'Track was not found' })
-  @ApiBadRequestResponse({
-    description: 'Bad Request, track "id" is invalid (not uuid)',
-  })
-  @Delete('track/:id')
-  async removeTrack(@Param('id') id: string) {
-    return this.favsService.remove(id, 'tracks');
-  }
-
-  @Header('Content-Type', 'application/json')
-  @ApiOperation({
-    summary: 'Delete album from favorites',
-    description: 'Delete album from favorites',
-  })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid' })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({
-    description: 'Deleted album successfully',
-  })
-  @ApiNotFoundResponse({ description: 'Album was not found' })
-  @ApiBadRequestResponse({
-    description: 'Bad Request, album "id" is invalid (not uuid)',
-  })
-  @Delete('album/:id')
-  async removeAlbum(@Param('id') id: string) {
-    return this.favsService.remove(id, 'albums');
   }
 
   @Header('Content-Type', 'application/json')
@@ -167,7 +166,7 @@ export class FavsController {
     description: 'Bad Request, artist "id" is invalid (not uuid)',
   })
   @Delete('artist/:id')
-  async removeArtist(@Param('id') id: string) {
-    return this.favsService.remove(id, 'artists');
+  async removeArtist(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favsService.removeArtist(id);
   }
 }

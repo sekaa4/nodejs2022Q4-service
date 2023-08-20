@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude, Transform } from 'class-transformer';
 
 export class User {
   @ApiProperty({
@@ -23,13 +24,20 @@ export class User {
     type: Number,
     example: 1655000000,
   })
-  createdAt: number;
+  @Transform(({ value }) => new Date(value).getTime())
+  createdAt: number | Date;
 
   @ApiProperty({
     type: Number,
     example: 1655000000,
   })
-  updatedAt: number;
+  @Transform(({ value }) => new Date(value).getTime())
+  updatedAt: number | Date;
 
+  @Exclude()
   password: string;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

@@ -43,7 +43,8 @@ export class UserController {
   @Header('Content-Type', 'application/json')
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    const user = await this.userService.create(createUserDto);
+    return new User(user);
   }
 
   @Header('Content-Type', 'application/json')
@@ -54,7 +55,8 @@ export class UserController {
   })
   @Get()
   async findAll() {
-    return this.userService.findAll();
+    const users = await this.userService.findAll();
+    return users;
   }
 
   @Header('Content-Type', 'application/json')
@@ -75,7 +77,8 @@ export class UserController {
   })
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.findOne(id);
+    const user = await this.userService.findOne(id);
+    return new User(user);
   }
 
   @Header('Content-Type', 'application/json')
@@ -104,7 +107,8 @@ export class UserController {
     id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.update(id, updateUserDto);
+    const user = await this.userService.update(id, updateUserDto);
+    return new User(user);
   }
 
   @Header('Content-Type', 'application/json')

@@ -8,6 +8,7 @@ import { TrackModule } from './track/track.module';
 import { FavsModule } from './favs/favs.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { PrismaModule } from './database/prisma/prisma.module';
 import config from './config/configuration';
 
 @Module({
@@ -22,6 +23,7 @@ import config from './config/configuration';
     TrackModule,
     FavsModule,
     DatabaseModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

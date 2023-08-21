@@ -7,10 +7,27 @@ import {
 } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { CustomLogger } from './logger/custom-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
   const configDotEnv = app.get(ConfigService);
+  const logger = app.get(CustomLogger);
+  app.useLogger(logger);
+
+  // process.on('uncaughtException', (err, origin) => {
+  //   const message =
+  //     `Caught exception: ${err}\n` + `Exception origin: ${origin}`;
+  //   logger.error(message, err.stack);
+  // });
+
+  // process.on('unhandledRejection', (reason, promise) => {
+  //   logger.debug(`Unhandled Rejection at: ${promise},${EOL}reason: ${reason}`);
+  // });
+
   const port = configDotEnv.get<number>('PORT_API');
 
   const config = new DocumentBuilder()
@@ -24,7 +41,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      // whitelist: true,
       transform: true,
       exceptionFactory: (errors) => {
         const result = errors.map((error) => ({
@@ -42,4 +58,14 @@ async function bootstrap() {
   SwaggerModule.setup('doc', app, document);
   await app.listen(port || 4000);
 }
+
 bootstrap();
+
+process.on('uncaughtException', (err, origin) => {
+  const message = `Caught exception: ${err}\n` + `Exception origin: ${origin}`;
+  console.log(message, err.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.log(`Unhandled Rejection at: ${promise}, reason: ${reason}`);
+});

@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import config from './config/configuration';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions-filter/all-exceptions.filter';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AllExceptionsFilter } from './all-exceptions-filter/all-exceptions.filt
       isGlobal: true,
       load: [config],
     }),
+    LoggerModule,
     AuthModule,
     UserModule,
     AlbumModule,

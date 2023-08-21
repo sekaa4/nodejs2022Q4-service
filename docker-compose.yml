@@ -19,6 +19,7 @@ services:
       target: development
     volumes:
       - ./src:/usr/app/src
+      - ./logs:/usr/app/logs
       - /usr/app/node_modules
     ports:
       - ${PORT}:${PORT}

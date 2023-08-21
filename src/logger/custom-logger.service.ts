@@ -15,10 +15,11 @@ export class CustomLogger extends ConsoleLogger {
   constructor(private readonly configService: ConfigService) {
     super();
 
-    let levels = this.configService.get<number>('LOG_LEVELS');
-    this.setLogLevels(LOG_LEVELS.slice(0, ++levels));
+    let level = this.configService.get<number>('LOG_LEVELS_API');
+    this.setLogLevels(LOG_LEVELS.slice(0, ++level));
 
-    this.maxFileSize = this.configService.get<number>('MAX_FILE_SIZE') * 1024;
+    this.maxFileSize =
+      this.configService.get<number>('MAX_FILE_SIZE_API') * 1024;
   }
   log(message: string) {
     if (this.isLevelEnabled('log')) {
@@ -35,10 +36,10 @@ export class CustomLogger extends ConsoleLogger {
       this.writeToFile(
         '🔍 Stack Trace: ' + this.customFormatMessage(trace, 'error'),
       );
-    }
 
-    super.error('❌ ' + message);
-    super.error('🔍 Stack Trace: ' + trace);
+      super.error('❌ ' + message);
+      super.error('🔍 Stack Trace: ' + trace);
+    }
   }
 
   warn(message: string) {

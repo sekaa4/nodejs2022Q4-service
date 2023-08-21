@@ -39,7 +39,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         path: url,
       };
 
-      this.customLogger.debug(
+      this.customLogger.log(
         `Method: "${method}" URL: "${url}" Query: ${JSON.stringify(
           query,
           null,
@@ -61,13 +61,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
         httpStatus,
       );
     } else {
-      console.log('exception', exception);
       const httpResponseBody = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: 'Internal Server Error',
       };
 
-      this.customLogger.debug(
+      this.customLogger.error(
         `Method: "${method}" URL: "${url}" Query: ${JSON.stringify(
           query,
           null,
@@ -83,6 +82,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           null,
           2,
         )}${EOL}Time: ${Date.now() - now}ms`,
+        exception.toString(),
       );
 
       httpAdapter.reply(

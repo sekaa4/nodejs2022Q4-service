@@ -11,11 +11,12 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './database/prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import config from './config/configuration';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { AllExceptionsFilter } from './all-exceptions-filter/all-exceptions.filter';
 import { LoggerModule } from './logger/logger.module';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
+import { AuthGuard } from './auth/guard/auth.guard';
 
 @Module({
   imports: [
@@ -36,6 +37,10 @@ import { LoggerInterceptor } from './interceptors/logger.interceptor';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

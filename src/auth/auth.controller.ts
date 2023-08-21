@@ -17,17 +17,18 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiUnauthorizedResponse,
-  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
 
 import { AuthService } from './auth.service';
+import { Public } from './decorators/auth.decorator';
 import { CreateAuthUserDto } from './dto/create-auth.dto';
 import { UpdateAuthUserDto } from './dto/update-auth.dto';
 import { Auth } from './entities/auth.entity';
 import { AuthRefreshGuard } from './guard/auth-refresh.guard';
 import { RefreshRequest } from './types/refresh-request';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -10,7 +10,6 @@ import {
   HttpStatus,
   HttpCode,
   ParseUUIDPipe,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -29,11 +28,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('User')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

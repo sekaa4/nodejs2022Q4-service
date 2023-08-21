@@ -8,7 +8,6 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
-  UseGuards,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
 import {
@@ -26,11 +25,9 @@ import {
 } from '@nestjs/swagger';
 import { FavoritesEntity } from './entities/fav.entity';
 import { CreateResponseDto } from './dto/create-response.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Favorites')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}

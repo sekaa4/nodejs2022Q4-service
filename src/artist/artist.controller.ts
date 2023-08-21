@@ -10,7 +10,6 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -24,7 +23,6 @@ import {
   ApiBearerAuth,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -32,7 +30,6 @@ import { Artist } from './entities/artist.entity';
 
 @ApiTags('Artist')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}

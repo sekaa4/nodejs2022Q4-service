@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiOperation,
   ApiCreatedResponse,
@@ -8,7 +16,8 @@ import {
   ApiForbiddenResponse,
   ApiBearerAuth,
   ApiConflictResponse,
-  ApiUnauthorizedResponse, //
+  ApiUnauthorizedResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
 
@@ -16,8 +25,8 @@ import { AuthService } from './auth.service';
 import { CreateAuthUserDto } from './dto/create-auth.dto';
 import { UpdateAuthUserDto } from './dto/update-auth.dto';
 import { Auth } from './entities/auth.entity';
+import { AuthRefreshGuard } from './guard/auth-refresh.guard';
 import { RefreshRequest } from './types/refresh-request';
-import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -58,6 +67,7 @@ export class AuthController {
     description:
       "Authentication failed, no user with such login, password doesn't match actual one, etc.",
   })
+  @HttpCode(HttpStatus.OK)
   @Post('/login')
   async signIn(@Body() createAuthUserDto: CreateAuthUserDto) {
     const response = await this.authService.signIn(createAuthUserDto);
@@ -82,16 +92,14 @@ export class AuthController {
   @ApiForbiddenResponse({
     description: 'Authentication failed, Refresh token is invalid or expired',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthRefreshGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('/refresh')
   async refreshTokens(
     @Body() updateAuthUserDto: UpdateAuthUserDto,
     @Req() req: RefreshRequest,
   ) {
-    const response = await this.authService.refreshTokens(
-      updateAuthUserDto,
-      req.user,
-    );
+    const response = await this.authService.refreshTokens(req.user);
 
     return response;
   }

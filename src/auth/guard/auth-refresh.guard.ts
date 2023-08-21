@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -20,7 +21,9 @@ export class AuthRefreshGuard implements CanActivate {
     const token = this.extractTokenFromBody(request);
 
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        'Bad request, body does not contain required fields, no refreshToken in body',
+      );
     }
 
     try {
@@ -30,7 +33,9 @@ export class AuthRefreshGuard implements CanActivate {
 
       request['user'] = payload;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException(
+        'Authentication failed, Refresh token is invalid or expired',
+      );
     }
 
     return true;

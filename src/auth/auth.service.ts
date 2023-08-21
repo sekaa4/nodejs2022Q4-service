@@ -8,7 +8,6 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { CreateAuthUserDto } from './dto/create-auth.dto';
-import { UpdateAuthUserDto } from './dto/update-auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { TokenExpire } from './types/refresh-request';
 
@@ -66,49 +65,29 @@ export class AuthService {
     );
   }
 
-  async refreshTokens(
-    updateAuthUserDto: UpdateAuthUserDto,
-    accessPayload: TokenExpire,
-  ) {
-    const { refreshToken } = updateAuthUserDto;
-
-    if (!refreshToken)
-      throw new UnauthorizedException(
-        'Bad request, body does not contain required fields, no refreshToken in body',
-      );
-
-    try {
-      const payload: TokenExpire = await this.jwtService.verifyAsync(
-        refreshToken,
-        {
+  async refreshTokens(accessPayload: TokenExpire) {
+    const user = await this.userService.findOne(accessPayload.userId);
+    if (user.login === accessPayload.login) {
+      const newPayload = {
+        login: accessPayload.login,
+        userId: accessPayload.userId,
+      };
+      const [accessToken, refreshToken] = await Promise.all([
+        this.jwtService.signAsync(newPayload),
+        this.jwtService.signAsync(newPayload, {
+          expiresIn: this.configService.get('TOKEN_REFRESH_EXPIRE_TIME'),
           secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
-        },
-      );
+        }),
+      ]);
 
-      if (
-        accessPayload.login === payload.login &&
-        accessPayload.userId === payload.userId
-      ) {
-        const newPayload = { login: payload.login, userId: payload.userId };
-        const [accessToken, refreshToken] = await Promise.all([
-          this.jwtService.signAsync(newPayload),
-          this.jwtService.signAsync(newPayload, {
-            expiresIn: this.configService.get('TOKEN_REFRESH_EXPIRE_TIME'),
-            secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
-          }),
-        ]);
-
-        return {
-          accessToken,
-          refreshToken,
-        };
-      }
-
-      throw new UnauthorizedException();
-    } catch (error) {
-      throw new ForbiddenException(
-        'Authentication failed, Refresh token is invalid or expired',
-      );
+      return {
+        accessToken,
+        refreshToken,
+      };
     }
+
+    throw new UnauthorizedException(
+      'Authentication failed, Refresh token is invalid or expired',
+    );
   }
 }

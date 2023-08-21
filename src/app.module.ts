@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Scope } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -11,9 +11,11 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './database/prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import config from './config/configuration';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+
 import { AllExceptionsFilter } from './all-exceptions-filter/all-exceptions.filter';
 import { LoggerModule } from './logger/logger.module';
+import { LoggerInterceptor } from './interceptors/logger.interceptor';
 
 @Module({
   imports: [
@@ -37,6 +39,11 @@ import { LoggerModule } from './logger/logger.module';
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      scope: Scope.REQUEST,
+      useClass: LoggerInterceptor,
     },
   ],
 })

@@ -12,6 +12,7 @@ import {
 import { FavsService } from './favs.service';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -19,12 +20,14 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { FavoritesEntity } from './entities/fav.entity';
 import { CreateResponseDto } from './dto/create-response.dto';
 
 @ApiTags('Favorites')
+@ApiBearerAuth()
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}
@@ -37,6 +40,9 @@ export class FavsController {
   @ApiOkResponse({
     description: 'The favorites were returned successfully',
     type: FavoritesEntity,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @Get()
   async findAll() {
@@ -55,6 +61,9 @@ export class FavsController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, track "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiUnprocessableEntityResponse({
     description: "Track with id doesn't exist",
@@ -76,10 +85,13 @@ export class FavsController {
   @ApiNoContentResponse({
     description: 'Deleted track successfully',
   })
-  @ApiNotFoundResponse({ description: 'Track was not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, track "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'Track was not found' })
   @Delete('track/:id')
   async removeTrack(@Param('id') id: string) {
     return this.favsService.removeTrack(id);
@@ -97,6 +109,9 @@ export class FavsController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, album "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiUnprocessableEntityResponse({
     description: "Album with id doesn't exist",
@@ -118,10 +133,13 @@ export class FavsController {
   @ApiNoContentResponse({
     description: 'Deleted album successfully',
   })
-  @ApiNotFoundResponse({ description: 'Album was not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, album "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'Album was not found' })
   @Delete('album/:id')
   async removeAlbum(@Param('id') id: string) {
     return this.favsService.removeAlbum(id);
@@ -139,6 +157,9 @@ export class FavsController {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request, artist "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @ApiUnprocessableEntityResponse({
     description: "Artist with id doesn't exist",
@@ -161,10 +182,13 @@ export class FavsController {
   @ApiNoContentResponse({
     description: 'Deleted artist successfully',
   })
-  @ApiNotFoundResponse({ description: 'Artist was not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, artist "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'Artist was not found' })
   @Delete('artist/:id')
   async removeArtist(@Param('id', ParseUUIDPipe) id: string) {
     return this.favsService.removeArtist(id);

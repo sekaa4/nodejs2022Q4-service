@@ -24,10 +24,13 @@ import {
   ApiNoContentResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 
 @ApiTags('User')
+@ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -39,6 +42,9 @@ export class UserController {
   })
   @ApiBadRequestResponse({
     description: 'Bad request, body does not contain required fields',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @Header('Content-Type', 'application/json')
   @Post()
@@ -52,6 +58,9 @@ export class UserController {
   @ApiOkResponse({
     description: 'The resources were returned successfully',
     type: [User],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
   })
   @Get()
   async findAll() {
@@ -72,6 +81,9 @@ export class UserController {
   @ApiBadRequestResponse({
     description: 'Bad Request, user "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @ApiNotFoundResponse({
     description: 'User not found',
   })
@@ -91,11 +103,14 @@ export class UserController {
     description: 'The user has been updated.',
     type: User,
   })
-  @ApiForbiddenResponse({
-    description: 'User oldPassword is wrong',
-  })
   @ApiBadRequestResponse({
     description: 'Bad Request, user "id" is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiForbiddenResponse({
+    description: 'User oldPassword is wrong',
   })
   @ApiNotFoundResponse({ description: 'User not found' })
   @Put(':id')
@@ -121,10 +136,13 @@ export class UserController {
   @ApiNoContentResponse({
     description: 'Deleted user successfully',
   })
-  @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({
     description: 'Bad Request, user "id" is invalid (not uuid)',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
+  @ApiNotFoundResponse({ description: 'User not found' })
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.remove(id);

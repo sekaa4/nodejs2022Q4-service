@@ -9,6 +9,87 @@ paths:
           description: ''
       tags:
         - Application
+  /auth/signup:
+    post:
+      operationId: AuthController_signUp
+      summary: Signup a user
+      description: Signup a user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAuthUserDto'
+      responses:
+        '201':
+          description: The user has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request, body does not contain required fields
+        '409':
+          description: Registration failed, user with such login exist, credentials taken
+      tags:
+        - Signup
+  /auth/login:
+    post:
+      operationId: AuthController_signIn
+      summary: Login user
+      description: Logins a user and returns a JWT-token
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAuthUserDto'
+      responses:
+        '200':
+          description: The user has been logged.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '400':
+          description: Bad request, body does not contain required fields
+        '403':
+          description: >-
+            Authentication failed, no user with such login, password doesn't
+            match actual one, etc.
+      tags:
+        - Login
+  /auth/refresh:
+    post:
+      operationId: AuthController_refreshTokens
+      summary: New pair of Access token and Refresh token
+      description: Get new pair of Access token and Refresh token
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAuthUserDto'
+      responses:
+        '200':
+          description: New pair of Access token and Refresh token created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '401':
+          description: >-
+            Bad request, body does not contain required fields, no refreshToken
+            in body
+        '403':
+          description: Authentication failed, Refresh token is invalid or expired
+      security:
+        - bearer: []
+      tags:
+        - Refresh token
   /user:
     post:
       operationId: UserController_create
@@ -30,8 +111,12 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Bad request, body does not contain required fields
+        '401':
+          description: Access token is missing or invalid
       tags: &ref_0
         - User
+      security: &ref_1
+        - bearer: []
     get:
       operationId: UserController_findAll
       summary: Get all users
@@ -46,7 +131,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '401':
+          description: Access token is missing or invalid
       tags: *ref_0
+      security: *ref_1
   /user/{id}:
     get:
       operationId: UserController_findOne
@@ -68,9 +156,12 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Bad Request, user "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: User not found
       tags: *ref_0
+      security: *ref_1
     put:
       operationId: UserController_update
       summary: Update a user's password
@@ -97,11 +188,14 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Bad Request, user "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '403':
           description: User oldPassword is wrong
         '404':
           description: User not found
       tags: *ref_0
+      security: *ref_1
     delete:
       operationId: UserController_remove
       summary: Delete user
@@ -118,119 +212,12 @@ paths:
           description: Deleted user successfully
         '400':
           description: Bad Request, user "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: User not found
       tags: *ref_0
-  /artist:
-    post:
-      operationId: ArtistController_create
-      summary: Add new artist
-      description: Add new artist information
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateArtistDto'
-      responses:
-        '201':
-          description: Created artist successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        '400':
-          description: Bad request, body does not contain required fields
-      tags: &ref_1
-        - Artist
-    get:
-      operationId: ArtistController_findAll
-      summary: Get all artists
-      description: Gets all artists
-      parameters: []
-      responses:
-        '200':
-          description: The artists were returned successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Artist'
-      tags: *ref_1
-  /artist/{id}:
-    get:
-      operationId: ArtistController_findOne
-      summary: Get single artist by id
-      description: Get single artist by id
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            format: uuid
-            type: string
-      responses:
-        '200':
-          description: The artist was returned successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        '400':
-          description: Bad Request, artist "id" is invalid (not uuid)
-        '404':
-          description: Artist was not found
-      tags: *ref_1
-    put:
-      operationId: ArtistController_update
-      summary: Update artist information
-      description: Update artist information by UUID
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            format: uuid
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateArtistDto'
-      responses:
-        '200':
-          description: The artist has been updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        '400':
-          description: Bad Request, artist "id" is invalid (not uuid)
-        '404':
-          description: Artist was not found
-      tags: *ref_1
-    delete:
-      operationId: ArtistController_remove
-      summary: Delete artist
-      description: Delete artist from library
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            format: uuid
-            type: string
-      responses:
-        '204':
-          description: Deleted artist successfully
-        '400':
-          description: Bad Request, artist "id" is invalid (not uuid)
-        '404':
-          description: Artist was not found
-      tags: *ref_1
+      security: *ref_1
   /album:
     post:
       operationId: AlbumController_create
@@ -254,6 +241,8 @@ paths:
           description: Bad request, body does not contain required fields
       tags: &ref_2
         - Album
+      security: &ref_3
+        - bearer: []
     get:
       operationId: AlbumController_findAll
       summary: Get albums list
@@ -268,7 +257,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Album'
+        '401':
+          description: Access token is missing or invalid
       tags: *ref_2
+      security: *ref_3
   /album/{id}:
     get:
       operationId: AlbumController_findOne
@@ -290,9 +282,12 @@ paths:
                 $ref: '#/components/schemas/Album'
         '400':
           description: Bad Request, album "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Album was not found
       tags: *ref_2
+      security: *ref_3
     put:
       operationId: AlbumController_update
       summary: Update album information
@@ -319,9 +314,12 @@ paths:
                 $ref: '#/components/schemas/Album'
         '400':
           description: Bad Request, album "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Album was not found
       tags: *ref_2
+      security: *ref_3
     delete:
       operationId: AlbumController_remove
       summary: Delete album
@@ -338,9 +336,138 @@ paths:
           description: Deleted album successfully
         '400':
           description: Bad Request, album "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Album was not found
       tags: *ref_2
+      security: *ref_3
+  /artist:
+    post:
+      operationId: ArtistController_create
+      summary: Add new artist
+      description: Add new artist information
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateArtistDto'
+      responses:
+        '201':
+          description: Created artist successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Bad request, body does not contain required fields
+        '401':
+          description: Access token is missing or invalid
+      tags: &ref_4
+        - Artist
+      security: &ref_5
+        - bearer: []
+    get:
+      operationId: ArtistController_findAll
+      summary: Get all artists
+      description: Gets all artists
+      parameters: []
+      responses:
+        '200':
+          description: The artists were returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artist'
+        '401':
+          description: Access token is missing or invalid
+      tags: *ref_4
+      security: *ref_5
+  /artist/{id}:
+    get:
+      operationId: ArtistController_findOne
+      summary: Get single artist by id
+      description: Get single artist by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          description: The artist was returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Bad Request, artist "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
+        '404':
+          description: Artist was not found
+      tags: *ref_4
+      security: *ref_5
+    put:
+      operationId: ArtistController_update
+      summary: Update artist information
+      description: Update artist information by UUID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArtistDto'
+      responses:
+        '200':
+          description: The artist has been updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Bad Request, artist "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
+        '404':
+          description: Artist was not found
+      tags: *ref_4
+      security: *ref_5
+    delete:
+      operationId: ArtistController_remove
+      summary: Delete artist
+      description: Delete artist from library
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Deleted artist successfully
+        '400':
+          description: Bad Request, artist "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
+        '404':
+          description: Artist was not found
+      tags: *ref_4
+      security: *ref_5
   /track:
     post:
       operationId: TrackController_create
@@ -362,8 +489,12 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           description: Bad request, body does not contain required fields
-      tags: &ref_3
+        '401':
+          description: Access token is missing or invalid
+      tags: &ref_6
         - Track
+      security: &ref_7
+        - bearer: []
     get:
       operationId: TrackController_findAll
       summary: Get tracks list
@@ -378,7 +509,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Track'
-      tags: *ref_3
+      tags: *ref_6
+      security: *ref_7
   /track/{id}:
     get:
       operationId: TrackController_findOne
@@ -400,9 +532,12 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           description: Bad Request, track "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Track was not found
-      tags: *ref_3
+      tags: *ref_6
+      security: *ref_7
     put:
       operationId: TrackController_update
       summary: Update track information
@@ -429,9 +564,12 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           description: Bad Request, track "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Track was not found
-      tags: *ref_3
+      tags: *ref_6
+      security: *ref_7
     delete:
       operationId: TrackController_remove
       summary: Delete track
@@ -448,9 +586,12 @@ paths:
           description: Deleted track successfully
         '400':
           description: Bad Request, track "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Track was not found
-      tags: *ref_3
+      tags: *ref_6
+      security: *ref_7
   /favs:
     get:
       operationId: FavsController_findAll
@@ -464,8 +605,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FavoritesEntity'
-      tags: &ref_4
+        '401':
+          description: Access token is missing or invalid
+      tags: &ref_8
         - Favorites
+      security: &ref_9
+        - bearer: []
   /favs/track/{id}:
     post:
       operationId: FavsController_createTrack
@@ -487,9 +632,12 @@ paths:
                 $ref: '#/components/schemas/CreateResponseDto'
         '400':
           description: Bad Request, track "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '422':
           description: Track with id doesn't exist
-      tags: *ref_4
+      tags: *ref_8
+      security: *ref_9
     delete:
       operationId: FavsController_removeTrack
       summary: Delete track from favorites
@@ -506,9 +654,12 @@ paths:
           description: Deleted track successfully
         '400':
           description: Bad Request, track "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Track was not found
-      tags: *ref_4
+      tags: *ref_8
+      security: *ref_9
   /favs/album/{id}:
     post:
       operationId: FavsController_createAlbum
@@ -530,9 +681,12 @@ paths:
                 $ref: '#/components/schemas/CreateResponseDto'
         '400':
           description: Bad Request, album "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '422':
           description: Album with id doesn't exist
-      tags: *ref_4
+      tags: *ref_8
+      security: *ref_9
     delete:
       operationId: FavsController_removeAlbum
       summary: Delete album from favorites
@@ -549,9 +703,12 @@ paths:
           description: Deleted album successfully
         '400':
           description: Bad Request, album "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Album was not found
-      tags: *ref_4
+      tags: *ref_8
+      security: *ref_9
   /favs/artist/{id}:
     post:
       operationId: FavsController_createArtist
@@ -573,9 +730,12 @@ paths:
                 $ref: '#/components/schemas/CreateResponseDto'
         '400':
           description: Bad Request, artist "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '422':
           description: Artist with id doesn't exist
-      tags: *ref_4
+      tags: *ref_8
+      security: *ref_9
     delete:
       operationId: FavsController_removeArtist
       summary: Delete artist from favorites
@@ -592,9 +752,12 @@ paths:
           description: Deleted artist successfully
         '400':
           description: Bad Request, artist "id" is invalid (not uuid)
+        '401':
+          description: Access token is missing or invalid
         '404':
           description: Artist was not found
-      tags: *ref_4
+      tags: *ref_8
+      security: *ref_9
 info:
   title: Home Library Service
   description: HLS API with CRUD functionality
@@ -604,8 +767,13 @@ tags: []
 servers:
   - url: http://localhost:4000
 components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
   schemas:
-    CreateUserDto:
+    CreateAuthUserDto:
       type: object
       properties:
         login:
@@ -613,6 +781,7 @@ components:
           description: The user's login
         password:
           type: string
+          format: password
           description: The user's password
       required:
         - login
@@ -641,6 +810,38 @@ components:
         - version
         - createdAt
         - updatedAt
+    Auth:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT Access Token
+        refreshToken:
+          type: string
+          description: JWT Refresh Token
+      required:
+        - accessToken
+        - refreshToken
+    UpdateAuthUserDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+        - refreshToken
+    CreateUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: The user's login
+        password:
+          type: string
+          format: password
+          description: The user's password
+      required:
+        - login
+        - password
     UpdateUserDto:
       type: object
       properties:
@@ -653,46 +854,6 @@ components:
       required:
         - oldPassword
         - newPassword
-    CreateArtistDto:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Freddie Mercury
-        grammy:
-          type: boolean
-          example: false
-      required:
-        - name
-        - grammy
-    Artist:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-          example: Freddie Mercury
-        grammy:
-          type: boolean
-          example: false
-      required:
-        - id
-        - name
-        - grammy
-    UpdateArtistDto:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Freddie Mercury
-        grammy:
-          type: boolean
-          example: false
-      required:
-        - name
-        - grammy
     CreateAlbumDto:
       type: object
       properties:
@@ -748,6 +909,46 @@ components:
         - name
         - year
         - artistId
+    CreateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Freddie Mercury
+        grammy:
+          type: boolean
+          example: false
+      required:
+        - name
+        - grammy
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Freddie Mercury
+        grammy:
+          type: boolean
+          example: false
+      required:
+        - id
+        - name
+        - grammy
+    UpdateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Freddie Mercury
+        grammy:
+          type: boolean
+          example: false
+      required:
+        - name
+        - grammy
     CreateTrackDto:
       type: object
       properties:

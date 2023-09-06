@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -13,7 +12,7 @@ import { Prisma } from '@prisma/client';
 export class UserService {
   constructor(private readonly databaseService: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+  async create(createUserDto: CreateUserDto) {
     const user = await this.databaseService.user.create({
       data: createUserDto,
     });
@@ -33,6 +32,19 @@ export class UserService {
     });
 
     if (!user) throw new NotFoundException(`User was not found`);
+
+    return user;
+  }
+
+  async findOneWithLogin(login: string) {
+    const user = await this.databaseService.user.findUnique({
+      where: { login },
+    });
+
+    if (!user)
+      throw new ForbiddenException(
+        `Authentication failed, no user with such login`,
+      );
 
     return user;
   }

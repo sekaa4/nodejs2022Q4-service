@@ -36,7 +36,7 @@ async function bootstrap() {
     .setDescription('HLS API with CRUD functionality')
     .setVersion('1.0')
     .addServer(`http://localhost:${port}`)
-    .addServer(`https://hls-lw2o.onrender.com:${port}`)
+    .addServer(`https://hls-lw2o.onrender.com`)
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
